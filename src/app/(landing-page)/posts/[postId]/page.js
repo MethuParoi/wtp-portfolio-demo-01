@@ -1,10 +1,57 @@
+// import { getPayload } from "../../../../lib/payload";
+// import { RichText as SerializedRichText } from "@payloadcms/richtext-lexical/react";
+
+// const Page = async ({ params }) => {
+//   //fetching the postId from the URL
+//   const { postId } = await params;
+//   //fetching the payload instance
+//   const payload = await getPayload();
+//   //fetching the post data from the payload instance
+//   //using the postId to get the specific post
+//   let post = await payload.find({
+//     collection: "posts",
+//     where: {
+//       id: {
+//         equals: postId,
+//       },
+//     },
+//   });
+
+//   if (!post) {
+//     return <div>Post not found</div>;
+//   }
+
+//   let data = post.docs[0];
+//   console.log(data);
+
+//   return (
+//     <div className="container mx-auto p-8 pb-20 sm:p-20">
+//       <div className="flex justify-center mb-5">
+//         <img
+//           className="w-1/2 h-auto rounded-lg shadow-lg"
+//           src={data.}
+//           alt={"Post image"}
+//         />
+//       </div>
+//       <h1 className="text-5xl font-bold mb-5 leading-normal text-center">
+//         {data.title}
+//       </h1>
+//       <SerializedRichText className="payload-richtext" data={data.content} />
+//     </div>
+//   );
+// };
+
+// export default Page;
+
+import Image from "next/image";
 import { getPayload } from "../../../../lib/payload";
 import { RichText as SerializedRichText } from "@payloadcms/richtext-lexical/react";
 
 const Page = async ({ params }) => {
   const { postId } = await params;
   const payload = await getPayload();
-  let post = await payload.find({
+
+  const post = await payload.find({
     collection: "posts",
     where: {
       id: {
@@ -13,20 +60,29 @@ const Page = async ({ params }) => {
     },
   });
 
-  if (!post) {
+  if (!post || !post.docs || post.docs.length === 0) {
     return <div>Post not found</div>;
   }
 
-  let data = post.docs[0];
-  console.log(data);
+  const data = post.docs[0];
+  const imageUrl = `/api/posts/file/${data.filename || ""}`; // Safely accessing image URL
 
   return (
     <div className="container mx-auto p-8 pb-20 sm:p-20">
-      <h1 className="text-5xl font-bold mb-5 leading-normal text-center">{data.title}</h1>
-      <SerializedRichText
-        className="payload-richtext"
-        data={data.content}
-      />
+      <pre>{JSON.stringify(data.media, null, 2)}</pre>
+      <div className="flex justify-center mb-5">
+        <Image
+          className="w-1/2 h-auto rounded-lg shadow-lg"
+          width={500}
+          height={500}
+          src={imageUrl}
+          alt={"Post image"}
+        />
+      </div>
+      <h1 className="text-5xl font-bold mb-5 leading-normal text-center">
+        {data.title}
+      </h1>
+      <SerializedRichText className="payload-richtext" data={data.content} />
     </div>
   );
 };
