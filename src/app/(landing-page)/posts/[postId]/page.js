@@ -1,48 +1,3 @@
-// import { getPayload } from "../../../../lib/payload";
-// import { RichText as SerializedRichText } from "@payloadcms/richtext-lexical/react";
-
-// const Page = async ({ params }) => {
-//   //fetching the postId from the URL
-//   const { postId } = await params;
-//   //fetching the payload instance
-//   const payload = await getPayload();
-//   //fetching the post data from the payload instance
-//   //using the postId to get the specific post
-//   let post = await payload.find({
-//     collection: "posts",
-//     where: {
-//       id: {
-//         equals: postId,
-//       },
-//     },
-//   });
-
-//   if (!post) {
-//     return <div>Post not found</div>;
-//   }
-
-//   let data = post.docs[0];
-//   console.log(data);
-
-//   return (
-//     <div className="container mx-auto p-8 pb-20 sm:p-20">
-//       <div className="flex justify-center mb-5">
-//         <img
-//           className="w-1/2 h-auto rounded-lg shadow-lg"
-//           src={data.}
-//           alt={"Post image"}
-//         />
-//       </div>
-//       <h1 className="text-5xl font-bold mb-5 leading-normal text-center">
-//         {data.title}
-//       </h1>
-//       <SerializedRichText className="payload-richtext" data={data.content} />
-//     </div>
-//   );
-// };
-
-// export default Page;
-
 import Image from "next/image";
 import { getPayload } from "../../../../lib/payload";
 import { RichText as SerializedRichText } from "@payloadcms/richtext-lexical/react";
@@ -52,7 +7,7 @@ const Page = async ({ params }) => {
   const payload = await getPayload();
 
   const post = await payload.find({
-    collection: "posts",
+    collection: "blog-posts",
     where: {
       id: {
         equals: postId,
@@ -65,7 +20,7 @@ const Page = async ({ params }) => {
   }
 
   const data = post.docs[0];
-  const imageUrl = `/api/posts/file/${data.filename || ""}`; // Safely accessing image URL
+  const imageUrl = `/api/blog-posts/file/${data.filename || ""}`; // Safely accessing image URL
 
   return (
     <div className="container mx-auto p-8 pb-20 sm:p-20">
@@ -82,7 +37,10 @@ const Page = async ({ params }) => {
       <h1 className="text-5xl font-bold mb-5 leading-normal text-center">
         {data.title}
       </h1>
-      <SerializedRichText className="payload-richtext" data={data.content} />
+      <p className="text-xl font-medium leading-normal text-center">
+        {data.content}
+      </p>
+      {/* <SerializedRichText className="payload-richtext" data={data.content} /> */}
     </div>
   );
 };

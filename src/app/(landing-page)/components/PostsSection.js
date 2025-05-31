@@ -12,22 +12,19 @@ function formatDate(timestamp) {
 
 const PostsSection = async () => {
   const payload = await getPayload();
-  const posts = await payload.find({
-    collection: "posts",
-    limit: 2,
-    sort: "-createdAt",
-    where: {
-      includedInBlog: {
-        equals: true,
-      },
-    },
-  });
+  let posts;
+
+  try {
+    posts = await payload.find({
+      collection: "blog-posts",
+    });
+  } catch (error) {
+    console.error("Error querying blog-posts collection:", error);
+    posts = { docs: [] }; // Fallback to an empty array if the query fails
+  }
 
   return (
-    <div
-      className="max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8"
-      id="blog"
-    >
+    <div className="max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8" id="blog">
       <div className="flex gap-12 sm:gap-24 md:flex-row flex-col">
         <div className="w-72">
           <h2 className="text-4xl font-bold text-light ">
@@ -48,7 +45,9 @@ const PostsSection = async () => {
                 </h3>
               </article>
               <div>
-                <time className="text-slate-300">{formatDate(post.createdAt)}</time>
+                <time className="text-slate-300">
+                  {formatDate(post.createdAt)}
+                </time>
               </div>
             </Link>
           ))}
